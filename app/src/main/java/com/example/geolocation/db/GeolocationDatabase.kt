@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.RoomMasterTable
 import com.example.geolocation.db.dao.GeolocationDao
 import com.example.geolocation.model.GeolocationModel
 
-@Database(entities = [GeolocationModel::class], version = 5)
+@Database(entities = [GeolocationModel::class], version = 10)
 abstract class GeolocationDatabase : RoomDatabase() {
     abstract fun getGeolocationDao(): GeolocationDao
 
@@ -16,14 +17,15 @@ abstract class GeolocationDatabase : RoomDatabase() {
 
         @Synchronized
         fun getInstance(context: Context):GeolocationDatabase{
+            return if (database == null){
+                database = Room.databaseBuilder(context.applicationContext, GeolocationDatabase::class.java, "db")
+                    .allowMainThreadQueries()
+                    .build()
+                database as GeolocationDatabase
+            }else{
+                database as GeolocationDatabase
+            }
 
-            return if (database==null){
-                database = Room.databaseBuilder(context,GeolocationDatabase::class.java, "db").build()
-                database as GeolocationDatabase
-            }
-            else{
-                database as GeolocationDatabase
-            }
         }
     }
 }

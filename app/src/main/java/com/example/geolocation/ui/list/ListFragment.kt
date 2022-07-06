@@ -1,7 +1,6 @@
 package com.example.geolocation.ui.list
 
 import android.os.Bundle
-import android.provider.SyncStateContract.Helpers.insert
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocation.adapter.GeolocationAdapter
 import com.example.geolocation.databinding.FragmentListBinding
-import com.example.geolocation.model.GeolocationModel
-import com.example.geolocation.ui.settings.SettingsViewModel
-import com.google.android.gms.maps.model.Marker
 
 class ListFragment : Fragment() {
 
@@ -30,33 +26,33 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val ListViewModel =
+        val listViewModel =
             ViewModelProvider(this)[ListViewModel::class.java]
 
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textList
-        ListViewModel.text.observe(viewLifecycleOwner) {
+        listViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //init()
+        init()
     }
 
-    fun init(){
+    private fun init(){
         val viewModel = ViewModelProvider(this)[ListViewModel::class.java]
         viewModel.initDatabase()
-        recyclerView = binding.recyclerViewLocation
-        adapter = GeolocationAdapter()
-        recyclerView.adapter = adapter
-        viewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
-            listGeolocation.asReversed()
-            adapter.setList(listGeolocation)
-        }
+//        recyclerView = binding.recyclerViewLocation
+//        adapter = GeolocationAdapter()
+//        recyclerView.adapter = adapter
+//        viewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
+//            listGeolocation.asReversed()
+//            adapter.setList(listGeolocation)
+//        }
     }
 
 

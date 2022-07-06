@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_layout.view.*
 
 class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationViewHolder>() {
 
-    var listGeolocation = emptyList<GeolocationModel>()
+    private var listGeolocation = emptyList<GeolocationModel>()
 
     class GeolocationViewHolder(view: View): RecyclerView.ViewHolder(view)
 
@@ -33,7 +33,7 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
     @SuppressLint("NotifyDataSetChanged")
     fun setList(list: List<GeolocationModel>){
         listGeolocation = list
-        //обновление
+        //обновление при изменении данных
         notifyDataSetChanged()
     }
 }

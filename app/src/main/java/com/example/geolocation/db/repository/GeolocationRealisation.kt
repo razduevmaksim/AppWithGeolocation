@@ -17,5 +17,4 @@ class GeolocationRealisation(private val geolocationDao: GeolocationDao): Geoloc
         geolocationDao.delete(geolocationModel)
         onSuccess()
     }
-
 }

@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.R
 import com.example.geolocation.databinding.FragmentMapBinding
 import com.example.geolocation.model.GeolocationModel
-import com.example.geolocation.ui.list.ListViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -52,6 +51,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
+    private fun init() {
+        val mapViewModel =
+            ViewModelProvider(this)[MapViewModel::class.java]
+        val title = "New point"
+        val latitude = 0.0.toString()
+        val longitude = 0.0.toString()
+        mapViewModel.insert(GeolocationModel(title = title, latitude = latitude, longitude = longitude)){}
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -64,11 +72,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val sydney = LatLng(-34.0, 151.0)
             mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney").draggable(true))
             mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-            val title = "New point"
-            val latitude = 0.0.toString()
-            val longitude = 0.0.toString()
-            //val ListViewModel = ViewModelProvider(this)[ListViewModel::class.java]
-            //ListViewModel.insert(GeolocationModel(title= title, latitude = latitude, longitude = longitude )){}
+            //init()
         }
 
         //mMap.setOnMarkerDragListener()

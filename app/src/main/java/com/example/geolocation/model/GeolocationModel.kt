@@ -5,16 +5,16 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "geolocation_table")
-class GeolocationModel(title: String, latitude: String, longitude: String) {
+class GeolocationModel(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Int = 0,
 
     @ColumnInfo
-    var title: String= title
+    var title: String= "",
 
     @ColumnInfo
-    var latitude: String = latitude
+    var latitude: String = "",
 
     @ColumnInfo
-    var longtitude: String = longitude
-}
+    var longitude: String = ""
+)
