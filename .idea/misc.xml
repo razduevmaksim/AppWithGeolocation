@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Study/Geolocation/app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="..\:/Study/Geolocation/app/src/main/res/layout/fragment_list.xml" value="0.1" />
+        <entry key="..\:/Study/Geolocation/app/src/main/res/layout/fragment_detail.xml" value="0.22" />
+        <entry key="..\:/Study/Geolocation/app/src/main/res/layout/fragment_list.xml" value="0.25" />
         <entry key="..\:/Study/Geolocation/app/src/main/res/layout/fragment_map.xml" value="0.1" />
         <entry key="..\:/Study/Geolocation/app/src/main/res/layout/fragment_settings.xml" value="0.1" />
+        <entry key="..\:/Study/Geolocation/app/src/main/res/layout/item_layout.xml" value="0.203125" />
         <entry key="..\:/Study/Geolocation/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
       </map>
     </option>
