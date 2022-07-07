@@ -8,7 +8,7 @@ import androidx.room.RoomMasterTable
 import com.example.geolocation.db.dao.GeolocationDao
 import com.example.geolocation.model.GeolocationModel
 
-@Database(entities = [GeolocationModel::class], version = 10)
+@Database(entities = [GeolocationModel::class], version = 11)
 abstract class GeolocationDatabase : RoomDatabase() {
     abstract fun getGeolocationDao(): GeolocationDao
 

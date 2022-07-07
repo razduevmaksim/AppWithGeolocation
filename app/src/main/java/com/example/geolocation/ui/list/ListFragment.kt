@@ -46,13 +46,13 @@ class ListFragment : Fragment() {
     private fun init(){
         val viewModel = ViewModelProvider(this)[ListViewModel::class.java]
         viewModel.initDatabase()
-//        recyclerView = binding.recyclerViewLocation
-//        adapter = GeolocationAdapter()
-//        recyclerView.adapter = adapter
-//        viewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
-//            listGeolocation.asReversed()
-//            adapter.setList(listGeolocation)
-//        }
+        recyclerView = binding.recyclerViewLocation
+        adapter = GeolocationAdapter()
+        recyclerView.adapter = adapter
+        viewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
+            listGeolocation.asReversed()
+            adapter.setList(listGeolocation)
+        }
     }
 
 
