@@ -14,10 +14,6 @@ class ListViewModel(application: Application) : AndroidViewModel(application){
     private lateinit var repository : GeolocationRepository
     private val context = application
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is list Fragment"
-    }
-    val text: LiveData<String> = _text
 
     fun initDatabase(){
         val daoGeolocation = GeolocationDatabase.getInstance(context).getGeolocationDao()
