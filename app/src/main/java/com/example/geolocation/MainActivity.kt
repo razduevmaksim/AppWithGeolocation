@@ -9,6 +9,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.geolocation.databinding.ActivityMainBinding
 
+const val APP_PREFERENCES = "APP_PREFERENCES "
+var ITEM_TITLE = "ITEM_TITLE"
+var ITEM_LATITUDE = "ITEM_LATITUDE"
+var ITEM_LONGITUDE = "ITEM_LONGITUDE"
+var ITEM_EDIT_PERMISSION = "ITEM_EDIT_PERMISSION"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
