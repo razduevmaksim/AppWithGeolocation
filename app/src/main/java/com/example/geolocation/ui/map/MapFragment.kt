@@ -51,14 +51,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
-    private fun init() {
-        val mapViewModel =
-            ViewModelProvider(this)[MapViewModel::class.java]
-        val title = "New point"
-        val latitude = 0.0.toString()
-        val longitude = 0.0.toString()
-        mapViewModel.insert(GeolocationModel(title = title, latitude = latitude, longitude = longitude)){}
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

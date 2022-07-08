@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocation.adapter.GeolocationAdapter
 import com.example.geolocation.databinding.FragmentListBinding
+import com.example.geolocation.model.GeolocationModel
+import com.example.geolocation.ui.map.MapViewModel
 
 class ListFragment : Fragment() {
 
@@ -53,6 +55,11 @@ class ListFragment : Fragment() {
             listGeolocation.asReversed()
             adapter.setList(listGeolocation)
         }
+            val title = "New point"
+            val latitude = 0.0.toString()
+            val longitude = 0.0.toString()
+            viewModel.insert(GeolocationModel(title = title, latitude = latitude, longitude = longitude)){}
+
     }
 
 

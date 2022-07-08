@@ -18,10 +18,5 @@ class MapViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 
-    fun insert(geolocationModel: GeolocationModel, onSuccess:() -> Unit) =
-        viewModelScope.launch (Dispatchers.IO) {
-            repository.insert(geolocationModel) {
-                onSuccess()
-            }
-        }
+
 }
