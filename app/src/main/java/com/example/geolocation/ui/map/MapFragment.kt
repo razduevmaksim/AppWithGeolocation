@@ -3,19 +3,25 @@ package com.example.geolocation.ui.map
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.*
 import com.example.geolocation.databinding.FragmentMapBinding
+import com.example.geolocation.model.GeolocationModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import java.lang.Math.log
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -55,6 +61,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         //SharedPreferences
+        val mapViewModel =
+            ViewModelProvider(this)[MapViewModel::class.java]
         preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         mMap = googleMap
         // Add a marker in Sydney and move the camera
@@ -76,5 +84,4 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         //mMap.setOnMarkerDragListener()
     }
-
 }

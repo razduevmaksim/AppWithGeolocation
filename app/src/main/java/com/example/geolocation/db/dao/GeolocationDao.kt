@@ -15,4 +15,7 @@ interface GeolocationDao {
 
     @Delete
     suspend fun delete(geolocationModel: GeolocationModel)
+
+    @Update
+    suspend fun update(geolocationModel: GeolocationModel)
 }

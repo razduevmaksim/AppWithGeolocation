@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class MapViewModel : ViewModel() {
 
     private lateinit var repository : GeolocationRepository
-
-
+    fun getAll():LiveData<List<GeolocationModel>>{
+        return repository.allGeolocations
+    }
 }

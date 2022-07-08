@@ -8,4 +8,5 @@ interface GeolocationRepository {
 
     suspend fun insert(geolocationModel: GeolocationModel, onSuccess:() -> Unit)
     suspend fun delete(geolocationModel: GeolocationModel, onSuccess:() -> Unit)
+    suspend fun update(geolocationModel: GeolocationModel, onSuccess:() -> Unit)
 }

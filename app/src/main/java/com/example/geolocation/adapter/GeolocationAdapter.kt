@@ -23,6 +23,8 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
 
     override fun onBindViewHolder(holder: GeolocationViewHolder, position: Int) {
         holder.itemView.item_title.text = listGeolocation[position].title
+        holder.itemView.item_lattitude_value.text = listGeolocation[position].latitude
+        holder.itemView.item_longitude_value.text = listGeolocation[position].longitude
     }
 
     override fun getItemCount(): Int {
