@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.*
 import com.example.geolocation.databinding.FragmentMapBinding
 import com.example.geolocation.model.GeolocationModel
+import com.example.geolocation.ui.list.ListViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -52,7 +53,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
-
+    private fun init(title:String, latitude: String, longitude:String) {
+        val viewModel = ViewModelProvider(this)[MapViewModel::class.java]
+        viewModel.initDatabase()
+        viewModel.insert(
+            GeolocationModel(
+                title = title,
+                latitude = latitude,
+                longitude = longitude
+            )
+        ) {}
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -60,27 +71,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        //SharedPreferences
-        val mapViewModel =
-            ViewModelProvider(this)[MapViewModel::class.java]
         preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         mMap = googleMap
-        // Add a marker in Sydney and move the camera
         binding.buttonAdd.setOnClickListener {
             val  mUpCameraPosition = mMap.cameraPosition
             val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
             mMap.addMarker(MarkerOptions().position(country).title("New point").draggable(true))
 
-            val editPermission = true
+            val title = "New Point"
             val latitude = country.latitude.toString()
             val longitude = country.longitude.toString()
-            //Передача данных в хранилище
-            val editor = preferences.edit()
-            editor.putString(ITEM_TITLE, "New point")
-            editor.putString(ITEM_LATITUDE, latitude)
-            editor.putString(ITEM_LONGITUDE, longitude)
-            editor.putBoolean(ITEM_EDIT_PERMISSION, editPermission)
-            editor.apply()
+
+            init(title,latitude, longitude)
         }
 
         //mMap.setOnMarkerDragListener()

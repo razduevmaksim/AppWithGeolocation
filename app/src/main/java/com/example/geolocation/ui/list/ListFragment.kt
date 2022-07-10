@@ -53,27 +53,6 @@ class ListFragment : Fragment() {
         }
         preferences =
             this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-        var editPermission = preferences.getBoolean(ITEM_EDIT_PERMISSION, false)
-        val latitude = preferences.getString(ITEM_LATITUDE, "").toString()
-        val title = preferences.getString(ITEM_TITLE, "").toString()
-        val longitude = preferences.getString(ITEM_LONGITUDE, "").toString()
-        val editor = preferences.edit()
-        if (editPermission) {
-            viewModel.insert(
-                GeolocationModel(
-                    title = title,
-                    latitude = latitude,
-                    longitude = longitude
-                )
-            ) {}
-
-            editPermission = false
-            editor.putString(ITEM_TITLE, "New point")
-            editor.putString(ITEM_LATITUDE, latitude)
-            editor.putString(ITEM_LONGITUDE, longitude)
-            editor.putBoolean(ITEM_EDIT_PERMISSION, editPermission)
-            editor.apply()
-        }
     }
 
     override fun onDestroyView() {
