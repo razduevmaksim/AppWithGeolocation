@@ -51,8 +51,6 @@ class ListFragment : Fragment() {
         viewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
             adapter.setList(listGeolocation.asReversed())
         }
-        preferences =
-            this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
     }
 
     override fun onDestroyView() {
