@@ -67,9 +67,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMap = googleMap
         // Add a marker in Sydney and move the camera
         binding.buttonAdd.setOnClickListener {
-            val country = LatLng(-34.0, 151.0)
+            val  mUpCameraPosition = mMap.cameraPosition
+            val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
             mMap.addMarker(MarkerOptions().position(country).title("New point").draggable(true))
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(country))
+
             val editPermission = true
             val latitude = country.latitude.toString()
             val longitude = country.longitude.toString()

@@ -22,17 +22,18 @@
         android:text="Latitude:"
         android:textSize="20dp"
         android:layout_gravity="center"
-        android:layout_marginEnd="60dp"
+        android:layout_marginEnd="100dp"
         />
 
     <TextView
         android:id="@+id/item_lattitude_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="70dp"
         android:text="mytitle"
         android:textSize="20dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="60dp"/>
+        />
     <TextView
         android:id="@+id/item_longitude"
         android:layout_width="wrap_content"
@@ -41,17 +42,17 @@
         android:textSize="20dp"
         android:layout_gravity="center"
         android:paddingTop="50dp"
-        android:layout_marginEnd="60dp"/>
+        android:layout_marginEnd="100dp"/>
 
     <TextView
         android:id="@+id/item_longitude_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="mytitle"
-        android:textSize="20dp"
         android:layout_gravity="center"
+        android:layout_marginStart="70dp"
         android:paddingTop="50dp"
-        android:layout_marginStart="60dp"/>
+        android:text="mytitle"
+        android:textSize="20dp" />
 
 
 </androidx.cardview.widget.CardView>
