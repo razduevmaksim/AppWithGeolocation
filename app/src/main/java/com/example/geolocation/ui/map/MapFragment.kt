@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.*
 import com.example.geolocation.R
@@ -22,6 +23,7 @@ import com.example.geolocation.model.GeolocationModel
 import com.example.geolocation.ui.MyLocationListener.MyLocationListener
 import com.example.geolocation.ui.MyLocationListener.MyLocationListenerInterface
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -58,7 +60,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         locationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         myLocationListener = MyLocationListener()
         myLocationListener.setMyLocationListenerInterface(this)
-        //checkPermissions()
+        checkPermissions()
     }
 
     override fun onRequestPermissionsResult(
@@ -80,6 +82,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 requestPermissions(permissions, 1)
             }
         }else{
+
+            mMap.isMyLocationEnabled = true
             //2 - частота, 10 - метры из 3 вкладки
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2,10.0f,myLocationListener)
         }
