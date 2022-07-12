@@ -13,8 +13,8 @@ interface GeolocationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(geolocationModel: GeolocationModel)
 
-    @Delete
-    suspend fun delete(geolocationModel: GeolocationModel)
+    @Query("DELETE FROM geolocation_table WHERE id=:id")
+    fun deleteById(id:Int)
 
     @Update
     suspend fun update(geolocationModel: GeolocationModel)

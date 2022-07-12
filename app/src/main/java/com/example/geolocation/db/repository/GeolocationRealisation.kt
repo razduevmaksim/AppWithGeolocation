@@ -14,8 +14,7 @@ class GeolocationRealisation(private val geolocationDao: GeolocationDao): Geoloc
     }
 
     override suspend fun delete(geolocationModel: GeolocationModel, onSuccess: () -> Unit) {
-        geolocationDao.delete(geolocationModel)
-        onSuccess()
+
     }
 
     override suspend fun update(geolocationModel: GeolocationModel, onSuccess: () -> Unit) {

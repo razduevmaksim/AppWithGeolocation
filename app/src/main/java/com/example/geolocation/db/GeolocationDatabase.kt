@@ -1,10 +1,12 @@
 package com.example.geolocation.db
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.RoomMasterTable
+import com.example.geolocation.adapter.GeolocationAdapter
 import com.example.geolocation.db.dao.GeolocationDao
 import com.example.geolocation.model.GeolocationModel
 
@@ -16,7 +18,7 @@ abstract class GeolocationDatabase : RoomDatabase() {
         private var database: GeolocationDatabase ?= null
 
         @Synchronized
-        fun getInstance(context: Context):GeolocationDatabase{
+        fun getInstance(context: Application):GeolocationDatabase{
             return if (database == null){
                 database = Room.databaseBuilder(context.applicationContext, GeolocationDatabase::class.java, "db")
                     .allowMainThreadQueries()
