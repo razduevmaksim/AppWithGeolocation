@@ -3,6 +3,7 @@ package com.example.geolocation.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "geolocation_table")
 class GeolocationModel(
@@ -17,4 +18,4 @@ class GeolocationModel(
 
     @ColumnInfo
     var longitude: String = ""
-)
+) : Serializable

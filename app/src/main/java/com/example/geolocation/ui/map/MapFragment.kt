@@ -10,11 +10,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.*
 import com.example.geolocation.R
@@ -32,7 +30,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     private lateinit var locationManager: LocationManager
     private lateinit var lastLocation: Location
     private lateinit var myLocationListener: MyLocationListener
-
+    private lateinit var preferences: SharedPreferences
 
     private var _binding: FragmentMapBinding? = null
 
@@ -75,6 +73,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     }
 
     private fun checkPermissions(){
+        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         val permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION)
         if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } != PackageManager.PERMISSION_GRANTED
             && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } != PackageManager.PERMISSION_GRANTED){
@@ -84,8 +83,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         }else{
 
             mMap.isMyLocationEnabled = true
-            //2 - частота, 10 - метры из 3 вкладки
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2,10.0f,myLocationListener)
+            val sampleRate:Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
+            val accuracy:Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,sampleRate,accuracy,myLocationListener)
         }
     }
 
