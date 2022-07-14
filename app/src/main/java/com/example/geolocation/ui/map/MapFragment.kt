@@ -1,5 +1,6 @@
 package com.example.geolocation.ui.map
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -12,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.*
@@ -53,12 +56,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
+        init()
+
+       checkPermissions()
+    }
+
+    fun init(){
         locationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         myLocationListener = MyLocationListener()
         myLocationListener.setMyLocationListenerInterface(this)
-        checkPermissions()
     }
 
     override fun onRequestPermissionsResult(
@@ -73,7 +82,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     }
 
     private fun checkPermissions(){
-        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        //preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         val permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION)
         if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } != PackageManager.PERMISSION_GRANTED
             && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } != PackageManager.PERMISSION_GRANTED){
@@ -81,12 +90,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 requestPermissions(permissions, 1)
             }
         }else{
-
             mMap.isMyLocationEnabled = true
-            val sampleRate:Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
-            val accuracy:Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,sampleRate,accuracy,myLocationListener)
+            //val sampleRate:Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
+            //val accuracy:Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2,10.0f,myLocationListener)
         }
     }
 
@@ -109,6 +118,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
         binding.buttonAdd.setOnClickListener {
             val  mUpCameraPosition = mMap.cameraPosition
             val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
@@ -122,13 +132,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         }
     }
 
-    //При изменении позиции. Добавление к дистанции метров
-    override fun OnLocationChanged(location: Location){
-        var distance = 0.0f
-        if (location.hasSpeed() && lastLocation != null){
-            distance += lastLocation.distanceTo(location)
+    override fun myOnLocationChanged(p0: Location) {
+        super.myOnLocationChanged(p0)
+        var distance : Float = 0.0f
+        if (p0.hasSpeed() && lastLocation !=null){
+            distance+=lastLocation.distanceTo(p0)
         }
-        lastLocation = location
-        //String.valueOf(disance) - показывает дистанцию, кот. прошли
+        lastLocation = p0
+        binding.information1.text = distance.toString()
+        binding.information2.text = p0.speed.toString()
     }
 }
