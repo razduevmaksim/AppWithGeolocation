@@ -5,6 +5,5 @@ import com.google.android.gms.maps.LocationSource
 
 interface MyLocationListenerInterface {
     fun myOnLocationChanged(p0: Location) {
-        TODO("Not yet implemented")
     }
 }

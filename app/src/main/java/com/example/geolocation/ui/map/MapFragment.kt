@@ -82,7 +82,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     }
 
     private fun checkPermissions(){
-        //preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         val permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION)
         if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } != PackageManager.PERMISSION_GRANTED
             && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } != PackageManager.PERMISSION_GRANTED){
@@ -92,10 +92,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         }else{
             mMap.isMyLocationEnabled = true
 
-            //val sampleRate:Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
-            //val accuracy:Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
+            val sampleRate:Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
+            val accuracy:Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2,10.0f,myLocationListener)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,sampleRate,accuracy,myLocationListener)
         }
     }
 
@@ -134,12 +134,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
     override fun myOnLocationChanged(p0: Location) {
         super.myOnLocationChanged(p0)
-        var distance : Float = 0.0f
-        if (p0.hasSpeed() && lastLocation !=null){
-            distance+=lastLocation.distanceTo(p0)
-        }
-        lastLocation = p0
-        binding.information1.text = distance.toString()
-        binding.information2.text = p0.speed.toString()
+//        var distance : Float = 0.0f
+//        if (p0.hasSpeed() && lastLocation !=null){
+//            distance+=lastLocation.distanceTo(p0)
+//        }
+//        lastLocation = p0
+//        binding.information1.text = distance.toString()
+//        binding.information2.text = p0.speed.toString()
     }
 }
