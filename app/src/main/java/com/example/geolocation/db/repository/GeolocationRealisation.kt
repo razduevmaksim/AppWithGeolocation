@@ -18,7 +18,6 @@ class GeolocationRealisation(private val geolocationDao: GeolocationDao): Geoloc
     }
 
     override suspend fun update(geolocationModel: GeolocationModel, onSuccess: () -> Unit) {
-        geolocationDao.update(geolocationModel)
-        onSuccess()
+
     }
 }

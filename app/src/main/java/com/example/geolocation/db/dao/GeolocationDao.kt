@@ -16,6 +16,7 @@ interface GeolocationDao {
     @Query("DELETE FROM geolocation_table WHERE id=:id")
     fun deleteById(id:Int)
 
-    @Update
-    suspend fun update(geolocationModel: GeolocationModel)
+
+    @Query("UPDATE geolocation_table SET title=:title WHERE id=:id")
+    fun updateById(id: Int, title:String)
 }

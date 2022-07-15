@@ -10,7 +10,7 @@ import com.example.geolocation.adapter.GeolocationAdapter
 import com.example.geolocation.db.dao.GeolocationDao
 import com.example.geolocation.model.GeolocationModel
 
-@Database(entities = [GeolocationModel::class], version = 11)
+@Database(entities = [GeolocationModel::class], version = 14)
 abstract class GeolocationDatabase : RoomDatabase() {
     abstract fun getGeolocationDao(): GeolocationDao
 
