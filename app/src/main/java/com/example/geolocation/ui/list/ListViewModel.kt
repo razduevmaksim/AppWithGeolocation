@@ -6,6 +6,8 @@ import com.example.geolocation.db.GeolocationDatabase
 import com.example.geolocation.db.repository.GeolocationRealisation
 import com.example.geolocation.db.repository.GeolocationRepository
 import com.example.geolocation.model.GeolocationModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListViewModel(application: Application) : AndroidViewModel(application){
 
@@ -21,5 +23,10 @@ class ListViewModel(application: Application) : AndroidViewModel(application){
     fun getAll():LiveData<List<GeolocationModel>>{
         return repository.allGeolocations
     }
+
+    fun deleteAll() =
+        viewModelScope.launch (Dispatchers.IO) {
+            repository.deleteAll()
+        }
 
 }
