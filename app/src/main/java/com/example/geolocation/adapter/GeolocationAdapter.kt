@@ -47,8 +47,15 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
         holder.itemView.button_update.setOnClickListener {
             var id = listGeolocation[position].id
             var title = holder.itemView.item_title_edit_text.text
+
             holder.itemView.item_title_edit_text.setText("")
-            GeolocationDatabase.getInstance(Application()).getGeolocationDao().updateById(id, title.toString())
+            if (title.toString() == "") {
+                GeolocationDatabase.getInstance(Application()).getGeolocationDao()
+                    .updateById(id, "New Point")
+            } else {
+                GeolocationDatabase.getInstance(Application()).getGeolocationDao()
+                    .updateById(id, title.toString())
+            }
         }
     }
 

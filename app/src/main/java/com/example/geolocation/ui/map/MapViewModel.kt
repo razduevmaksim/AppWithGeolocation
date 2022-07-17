@@ -16,6 +16,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     fun getAll():LiveData<List<GeolocationModel>>{
         return repository.allGeolocations
     }
+
     fun initDatabase(){
         val daoGeolocation = GeolocationDatabase.getInstance(context).getGeolocationDao()
         repository = GeolocationRealisation(daoGeolocation)

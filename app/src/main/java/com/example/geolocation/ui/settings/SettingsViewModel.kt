@@ -1,10 +1,6 @@
 package com.example.geolocation.ui.settings
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
 
-class SettingsViewModel : ViewModel()  {
-
-
-}
+class SettingsViewModel(application: Application) : AndroidViewModel(application){}

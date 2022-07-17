@@ -1,21 +1,26 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.geolocation.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.APP_PREFERENCES
 import com.example.geolocation.APP_PREFERENCES_METRES
 import com.example.geolocation.APP_PREFERENCES_MINUTES
-import com.example.geolocation.MainActivity
 import com.example.geolocation.databinding.FragmentSettingsBinding
+import com.example.geolocation.ui.MyLocationListener.MyLocationListenerInterface
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : Fragment(), MyLocationListenerInterface {
     private lateinit var preferences: SharedPreferences
 
     private var _binding: FragmentSettingsBinding? = null
@@ -29,8 +34,6 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val settingsViewModel =
-            ViewModelProvider(this)[SettingsViewModel::class.java]
 
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
@@ -39,6 +42,8 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        checkPermissions()
         preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
 
         binding.sampleRateSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -73,6 +78,29 @@ class SettingsFragment : Fragment() {
             }
 
         })
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1 && grantResults[0] == AppCompatActivity.RESULT_OK){
+            checkPermissions()
+        }
+    }
+
+    private fun checkPermissions(){
+        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } != PackageManager.PERMISSION_GRANTED
+            && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } != PackageManager.PERMISSION_GRANTED){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(permissions, 1)
+            }
+        }
     }
 
     override fun onDestroyView() {
