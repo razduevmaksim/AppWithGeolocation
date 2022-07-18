@@ -1,19 +1,13 @@
 package com.example.geolocation
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.geolocation.databinding.ActivityMainBinding
-import com.example.geolocation.model.GeolocationModel
 
 const val APP_PREFERENCES = "APP_PREFERENCES"
 var APP_PREFERENCES_MINUTES = "APP_PREFERENCES_MINUTES"

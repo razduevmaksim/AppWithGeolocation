@@ -1,8 +1,10 @@
-package com.example.geolocation.ui.MyLocationListener
+@file:Suppress("DEPRECATION")
+
+package com.example.geolocation.ui.myLocationListener
+
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
-import com.google.android.gms.maps.LocationSource
 
 class MyLocationListener : LocationListener {
     private lateinit var myLocationListenerInterface: MyLocationListenerInterface
@@ -11,12 +13,11 @@ class MyLocationListener : LocationListener {
         myLocationListenerInterface.myOnLocationChanged(location)
     }
 
-    override fun onProviderDisabled(provider: String) {
-        super.onProviderDisabled(provider)
-    }
-    override fun onProviderEnabled(provider: String) {
-        super.onProviderEnabled(provider)
-    }
+    @Deprecated("Deprecated in Java", ReplaceWith(
+        "super.onStatusChanged(provider, status, extras)",
+        "android.location.LocationListener"
+    )
+    )
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
         super.onStatusChanged(provider, status, extras)
     }

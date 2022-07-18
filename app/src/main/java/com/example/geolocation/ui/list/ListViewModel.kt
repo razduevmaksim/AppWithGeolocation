@@ -14,7 +14,6 @@ class ListViewModel(application: Application) : AndroidViewModel(application){
     private lateinit var repository : GeolocationRepository
     private val context = application
 
-
     fun initDatabase(){
         val daoGeolocation = GeolocationDatabase.getInstance(context).getGeolocationDao()
         repository = GeolocationRealisation(daoGeolocation)

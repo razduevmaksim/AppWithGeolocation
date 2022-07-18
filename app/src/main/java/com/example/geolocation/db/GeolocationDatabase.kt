@@ -1,12 +1,9 @@
 package com.example.geolocation.db
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.RoomMasterTable
-import com.example.geolocation.adapter.GeolocationAdapter
 import com.example.geolocation.db.dao.GeolocationDao
 import com.example.geolocation.model.GeolocationModel
 

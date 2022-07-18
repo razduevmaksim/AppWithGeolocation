@@ -22,8 +22,8 @@ import com.example.geolocation.*
 import com.example.geolocation.R
 import com.example.geolocation.databinding.FragmentMapBinding
 import com.example.geolocation.model.GeolocationModel
-import com.example.geolocation.ui.MyLocationListener.MyLocationListener
-import com.example.geolocation.ui.MyLocationListener.MyLocationListenerInterface
+import com.example.geolocation.ui.myLocationListener.MyLocationListener
+import com.example.geolocation.ui.myLocationListener.MyLocationListenerInterface
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
@@ -39,7 +39,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     private val channelId = "CHANNEL_ID"
     private val channelName = "CHANNEL_NAME"
     private val notificationId = 0
-
 
     private var _binding: FragmentMapBinding? = null
 
@@ -63,7 +62,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
         init()
-
     }
 
     private fun init(){
@@ -106,14 +104,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 ViewModelProvider(this)[MapViewModel::class.java]
 
             mapViewModel.initDatabase()
+
             mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
                 listGeolocation.forEach { itemList ->
                     val title = itemList.title
                     val latitude = itemList.latitude.toDouble()
                     val longitude = itemList.longitude.toDouble()
                     val country = LatLng(latitude, longitude)
+
                     mMap.addMarker(MarkerOptions().position(country).title(title))
+
                     val currentLocation  = getLastKnownLocation()
+
                     if(getDistance(country, currentLocation)>=6500000.0){
                         showNotification()
                         preferences = this.requireActivity().getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
@@ -139,11 +141,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     }
     private fun showNotification(){
         createNotificationChannel()
+
         val intent = Intent(context, NotificationActivity::class.java)
+
         val pendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(intent)
             getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
+
         val notificationCompat = context?.let {
             NotificationCompat.Builder(it, channelId)
                 .setSmallIcon(R.drawable.ic_baseline_navigation_24)
@@ -154,6 +159,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 .build()
         }
         val notificationManager = context?.let { NotificationManagerCompat.from(it) }
+
         if (notificationCompat != null) {
             notificationManager?.notify(notificationId, notificationCompat)
         }
@@ -163,6 +169,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             lightColor = Color.BLUE
             enableLights(true)
         }
+
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
@@ -186,9 +193,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         val locationA = Location("A")
         locationA.latitude = LatLng1.latitude
         locationA.longitude = LatLng1.longitude
+
         val locationB = Location("B")
         locationB.latitude = LatLng2.latitude
         locationB.longitude = LatLng2.longitude
+
         return locationA.distanceTo(locationB).toDouble()
     }
 

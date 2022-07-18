@@ -17,7 +17,7 @@ import com.example.geolocation.APP_PREFERENCES
 import com.example.geolocation.APP_PREFERENCES_METRES
 import com.example.geolocation.APP_PREFERENCES_MINUTES
 import com.example.geolocation.databinding.FragmentSettingsBinding
-import com.example.geolocation.ui.MyLocationListener.MyLocationListenerInterface
+import com.example.geolocation.ui.myLocationListener.MyLocationListenerInterface
 
 class SettingsFragment : Fragment(), MyLocationListenerInterface {
     private lateinit var preferences: SharedPreferences

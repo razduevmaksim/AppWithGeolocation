@@ -1,6 +1,7 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.geolocation.ui.list
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -33,10 +34,16 @@ class ListFragment : Fragment() {
         init()
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith(
+        "inflater.inflate(R.menu.menu_action_bar, menu)",
+        "com.example.geolocation.R"
+    )
+    )
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_action_bar, menu)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.mybutton) {
             deleteAll()
@@ -44,18 +51,14 @@ class ListFragment : Fragment() {
         return super.onOptionsItemSelected(item)
 
     }
-    fun deleteAll(){
+    private fun deleteAll(){
         val viewModel = ViewModelProvider(this)[ListViewModel::class.java]
-//        val builder = AlertDialog.Builder(requireContext())
-//        builder.setPositiveButton("Yes"){
-//            _,_ ->
-//            viewModel.deleteAll()
-//        }
         viewModel.initDatabase()
         adapter = GeolocationAdapter()
         recyclerView.adapter = adapter
         viewModel.deleteAll()
     }
+
     private fun init() {
         val viewModel = ViewModelProvider(this)[ListViewModel::class.java]
         viewModel.initDatabase()
