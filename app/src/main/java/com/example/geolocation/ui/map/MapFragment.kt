@@ -116,10 +116,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                     val currentLocation  = getLastKnownLocation()
                     if(getDistance(country, currentLocation)>=6500000.0){
                         showNotification()
+                        preferences = this.requireActivity().getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
+                        val editor = preferences.edit()
+                        editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
+                        editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
+                        editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
+                        editor.apply()
                     }
                 }
             }
         }
+
         binding.buttonAdd.setOnClickListener {
             val  mUpCameraPosition = mMap.cameraPosition
             val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
@@ -172,6 +179,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                     currentLocation = LatLng (myCurrentLocationLatitude, myCurrentLocationLongitude)
                 }
             }
+
         return currentLocation
     }
     private fun getDistance(LatLng1: LatLng, LatLng2: LatLng): Double {

@@ -15,9 +15,14 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.geolocation.databinding.ActivityMainBinding
 import com.example.geolocation.model.GeolocationModel
 
-val APP_PREFERENCES = "APP_PREFERENCES"
+const val APP_PREFERENCES = "APP_PREFERENCES"
 var APP_PREFERENCES_MINUTES = "APP_PREFERENCES_MINUTES"
 var APP_PREFERENCES_METRES = "APP_PREFERENCES_METRES"
+const val GEOLOCATION_PREFERENCES = "GEOLOCATION_PREFERENCES"
+var GEOLOCATION_PREFERENCES_TITLE = "GEOLOCATION_PREFERENCES_TITLE"
+var GEOLOCATION_PREFERENCES_LATITUDE = "GEOLOCATION_PREFERENCES_LATITUDE"
+var GEOLOCATION_PREFERENCES_LONGITUDE = "GEOLOCATION_PREFERENCES_LONGITUDE"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
