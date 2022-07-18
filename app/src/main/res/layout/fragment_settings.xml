@@ -9,16 +9,16 @@
         android:id="@+id/sample_rate_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sample rate"
-        android:textSize="26dp"
+        android:text="@string/sample_rate_title"
+        android:textSize="26sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <TextView
         android:id="@+id/sample_rate_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:text="Accuracy of the geolocation tracking service (minutes)"
+        android:textSize="20sp"
+        android:text="@string/sample_rate_description"
         app:layout_constraintTop_toBottomOf="@id/sample_rate_title"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <SeekBar
@@ -34,7 +34,7 @@
         android:id="@+id/sample_rate_seek_bar_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1"
+        android:text="@string/sample_rate_value"
         app:layout_constraintLeft_toRightOf="@id/sample_rate_seek_bar"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sample_rate_description"
@@ -44,16 +44,16 @@
         android:id="@+id/accuracy_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accuracy"
-        android:textSize="26dp"
+        android:text="@string/accuracy"
+        android:textSize="26sp"
         app:layout_constraintTop_toBottomOf="@id/sample_rate_seek_bar"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <TextView
         android:id="@+id/accuracy_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:text="Survey frequency of the geolocation tracking service (metres)"
+        android:textSize="20sp"
+        android:text="@string/accuracy_description"
         app:layout_constraintTop_toBottomOf="@id/accuracy_title"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <SeekBar
@@ -69,7 +69,7 @@
         android:id="@+id/accuracy_seek_bar_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="10"
+        android:text="@string/accuracy_value"
         app:layout_constraintLeft_toRightOf="@id/accuracy_seek_bar"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/accuracy_description"
