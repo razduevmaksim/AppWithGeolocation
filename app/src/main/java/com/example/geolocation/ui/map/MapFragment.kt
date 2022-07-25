@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.geolocation.ui.map
 
 import android.annotation.SuppressLint
@@ -13,22 +15,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.geolocation.*
-import com.example.geolocation.R
 import com.example.geolocation.databinding.FragmentMapBinding
 import com.example.geolocation.model.GeolocationModel
 import com.example.geolocation.ui.myLocationListener.MyLocationListener
 import com.example.geolocation.ui.myLocationListener.MyLocationListenerInterface
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+
 
 class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface {
     private lateinit var mMap: GoogleMap
@@ -58,10 +63,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
+        init()
+        checkPermissions()
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
-        init()
     }
 
     private fun init(){
@@ -87,6 +92,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } == PackageManager.PERMISSION_GRANTED
             && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } == PackageManager.PERMISSION_GRANTED) {
+            mMap.clear()
 
             mMap.isMyLocationEnabled = true
 
@@ -104,7 +110,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 ViewModelProvider(this)[MapViewModel::class.java]
 
             mapViewModel.initDatabase()
-
             mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
                 listGeolocation.forEach { itemList ->
                     val title = itemList.title
@@ -139,6 +144,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             addInformationToDatabase(latitude, longitude)
         }
     }
+
     private fun showNotification(){
         createNotificationChannel()
 
@@ -164,6 +170,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             notificationManager?.notify(notificationId, notificationCompat)
         }
     }
+
     private fun createNotificationChannel(){
         val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
             lightColor = Color.BLUE
@@ -173,6 +180,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(): LatLng {
         var myCurrentLocationLatitude = 0.0
@@ -189,6 +197,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
         return currentLocation
     }
+
     private fun getDistance(LatLng1: LatLng, LatLng2: LatLng): Double {
         val locationA = Location("A")
         locationA.latitude = LatLng1.latitude
@@ -199,6 +208,27 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         locationB.longitude = LatLng2.longitude
 
         return locationA.distanceTo(locationB).toDouble()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1 && grantResults[0] == AppCompatActivity.RESULT_OK){
+            checkPermissions()
+        }
+    }
+
+    private fun checkPermissions(){
+        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        val permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } != PackageManager.PERMISSION_GRANTED
+            && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(permissions, 1)
+        }
     }
 
     override fun onDestroyView() {
