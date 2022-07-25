@@ -15,7 +15,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -34,7 +33,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-
 class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface {
     private lateinit var mMap: GoogleMap
     private lateinit var locationManager: LocationManager
@@ -46,7 +44,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     private val notificationId = 0
 
     private var _binding: FragmentMapBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -64,7 +61,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         super.onViewCreated(view, savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         init()
-        checkPermissions()
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
@@ -210,26 +207,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         return locationA.distanceTo(locationB).toDouble()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1 && grantResults[0] == AppCompatActivity.RESULT_OK){
-            checkPermissions()
-        }
-    }
-
-    private fun checkPermissions(){
-        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-        val permissions = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.ACCESS_FINE_LOCATION)
-        if(context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) } != PackageManager.PERMISSION_GRANTED
-            && context?.let { ActivityCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_COARSE_LOCATION) } != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(permissions, 1)
-        }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
