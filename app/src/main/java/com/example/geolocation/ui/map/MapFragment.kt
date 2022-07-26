@@ -2,7 +2,6 @@
 
 package com.example.geolocation.ui.map
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -33,6 +32,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.fragment_map.*
 
 class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface {
     private lateinit var mMap: GoogleMap
@@ -65,10 +65,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         init()
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
-    }
-
-    private fun createDialog(){
-
     }
 
     private fun init(){
@@ -109,6 +105,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 myLocationListener
             )
 
+            val locationProvider = LocationManager.NETWORK_PROVIDER
+            val lastKnownLocation =
+                locationManager.getLastKnownLocation(locationProvider)
+            val userLatitude = lastKnownLocation!!.latitude
+            val userLongitude = lastKnownLocation!!.longitude
+
             val mapViewModel =
                 ViewModelProvider(this)[MapViewModel::class.java]
 
@@ -122,9 +124,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
                     mMap.addMarker(MarkerOptions().position(country).title(title))
 
-                    val currentLocation  = getLastKnownLocation()
+                    val currentLocation  = LatLng(userLatitude, userLongitude)
 
-                    if(getDistance(country, currentLocation)>=6500000.0){
+                    if(getDistance(country, currentLocation)<=500){
                         showNotification()
                         preferences = this.requireActivity().getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
                         val editor = preferences.edit()
@@ -136,6 +138,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 }
             }
         }
+        val accuracy: Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
+        val accuracyInInt = accuracy.toInt()
 
         binding.buttonAdd.setOnClickListener {
             val builder = AlertDialog.Builder(context)
@@ -147,20 +151,41 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                 dialog.cancel()
             }
             builder.setPositiveButton("Apply"){ _, _ ->
-                if (editTextDialog.text.toString() == ""){
-                    title = "New Point"
-                }
-                else {
-                    title = editTextDialog.text.toString()
+                title = if (editTextDialog.text.toString() == ""){
+                    "New Point"
+                } else {
+                    editTextDialog.text.toString()
                 }
 
-                val  mUpCameraPosition = mMap.cameraPosition
+                val mapViewModel =
+                    ViewModelProvider(this)[MapViewModel::class.java]
+
+                var validationAccuracy = true
+
+                val mUpCameraPosition = mMap.cameraPosition
                 val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
-                mMap.addMarker(MarkerOptions().position(country).title(title))
 
-                val latitude = country.latitude.toString()
-                val longitude = country.longitude.toString()
-                addInformationToDatabase(title, latitude, longitude)
+                mapViewModel.initDatabase()
+                mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
+                    listGeolocation.forEach { itemList ->
+                        val pointLatitude = itemList.latitude.toDouble()
+                        val pointLongitude = itemList.longitude.toDouble()
+                        val pointCountry = LatLng(pointLatitude, pointLongitude)
+
+                        if(getDistance(country, pointCountry)<=accuracyInInt){
+                            validationAccuracy = false
+                        }
+                    }
+                    if (validationAccuracy) {
+                        mMap.addMarker(MarkerOptions().position(country).title(title))
+
+                        val latitude = country.latitude.toString()
+                        val longitude = country.longitude.toString()
+                        addInformationToDatabase(title, latitude, longitude)
+                    }
+                }
+
+
             }
             builder.show()
         }
@@ -200,23 +225,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-    }
-
-    @SuppressLint("MissingPermission")
-    fun getLastKnownLocation(): LatLng {
-        var myCurrentLocationLatitude = 0.0
-        var myCurrentLocationLongitude = 0.0
-        var currentLocation = LatLng (myCurrentLocationLatitude, myCurrentLocationLongitude)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location->
-                if (location != null) {
-                    myCurrentLocationLatitude = location.latitude
-                    myCurrentLocationLongitude = location.longitude
-                    currentLocation = LatLng (myCurrentLocationLatitude, myCurrentLocationLongitude)
-                }
-            }
-
-        return currentLocation
     }
 
     private fun getDistance(LatLng1: LatLng, LatLng2: LatLng): Double {
