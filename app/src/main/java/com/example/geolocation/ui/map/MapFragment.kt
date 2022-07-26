@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -39,10 +40,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     private lateinit var myLocationListener: MyLocationListener
     private lateinit var preferences: SharedPreferences
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private val channelId = "CHANNEL_ID"
     private val channelName = "CHANNEL_NAME"
     private val notificationId = 0
-
+    private lateinit var title:String
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
@@ -61,9 +63,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         super.onViewCreated(view, savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         init()
-
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    private fun createDialog(){
+
     }
 
     private fun init(){
@@ -72,17 +77,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         myLocationListener.setMyLocationListenerInterface(this)
     }
 
-    private fun addInformationToDatabase(latitude: String, longitude:String) {
+    private fun addInformationToDatabase(title:String, latitude: String, longitude:String) {
         val viewModel = ViewModelProvider(this)[MapViewModel::class.java]
         viewModel.initDatabase()
         viewModel.insert(
             GeolocationModel(
-                title = "New Point",
+                title = title,
                 latitude = latitude,
                 longitude = longitude
             )
         ) {}
     }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -132,13 +138,31 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         }
 
         binding.buttonAdd.setOnClickListener {
-            val  mUpCameraPosition = mMap.cameraPosition
-            val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
-            mMap.addMarker(MarkerOptions().position(country).title("New point"))
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Enter Data")
+            builder.setMessage("Enter your title")
+            val editTextDialog = EditText(context)
+            builder.setView(editTextDialog)
+            builder.setNegativeButton("Cancel"){ dialog, _ ->
+                dialog.cancel()
+            }
+            builder.setPositiveButton("Apply"){ _, _ ->
+                if (editTextDialog.text.toString() == ""){
+                    title = "New Point"
+                }
+                else {
+                    title = editTextDialog.text.toString()
+                }
 
-            val latitude = country.latitude.toString()
-            val longitude = country.longitude.toString()
-            addInformationToDatabase(latitude, longitude)
+                val  mUpCameraPosition = mMap.cameraPosition
+                val country = LatLng (mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
+                mMap.addMarker(MarkerOptions().position(country).title(title))
+
+                val latitude = country.latitude.toString()
+                val longitude = country.longitude.toString()
+                addInformationToDatabase(title, latitude, longitude)
+            }
+            builder.show()
         }
     }
 
