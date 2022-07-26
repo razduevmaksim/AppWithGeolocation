@@ -32,7 +32,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.fragment_map.*
 
 class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface {
     private lateinit var mMap: GoogleMap
@@ -109,7 +108,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             val lastKnownLocation =
                 locationManager.getLastKnownLocation(locationProvider)
             val userLatitude = lastKnownLocation!!.latitude
-            val userLongitude = lastKnownLocation!!.longitude
+            val userLongitude = lastKnownLocation.longitude
 
             val mapViewModel =
                 ViewModelProvider(this)[MapViewModel::class.java]
