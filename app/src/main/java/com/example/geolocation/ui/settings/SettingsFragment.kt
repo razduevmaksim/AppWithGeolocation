@@ -15,6 +15,7 @@ import com.example.geolocation.APP_PREFERENCES_METRES
 import com.example.geolocation.APP_PREFERENCES_MINUTES
 import com.example.geolocation.databinding.FragmentSettingsBinding
 import com.example.geolocation.ui.myLocationListener.MyLocationListenerInterface
+import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : Fragment(), MyLocationListenerInterface {
     private lateinit var preferences: SharedPreferences
@@ -40,7 +41,8 @@ class SettingsFragment : Fragment(), MyLocationListenerInterface {
         super.onViewCreated(view, savedInstanceState)
 
         preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-
+        sample_rate_seek_bar_value.text = preferences.getLong(APP_PREFERENCES_MINUTES, 1L).toInt().toString()
+        sample_rate_seek_bar.progress = preferences.getLong(APP_PREFERENCES_MINUTES, 1L).toInt()
         binding.sampleRateSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.sampleRateSeekBarValue.text = progress.toString()
@@ -57,6 +59,8 @@ class SettingsFragment : Fragment(), MyLocationListenerInterface {
             }
 
         })
+        accuracy_seek_bar_value.text = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f).toInt().toString()
+        accuracy_seek_bar.progress = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f).toInt()
         binding.accuracySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.accuracySeekBarValue.text = progress.toString()
