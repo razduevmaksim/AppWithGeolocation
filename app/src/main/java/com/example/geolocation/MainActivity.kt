@@ -10,6 +10,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var locationRequest: LocationRequest
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -62,7 +64,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_map, R.id.navigation_list, R.id.navigation_settings
             )
         )
-        //checkPermissions()
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         preferences = this.getSharedPreferences(VALIDATION_PREFERENCES, Context.MODE_PRIVATE)
@@ -72,7 +73,6 @@ class MainActivity : AppCompatActivity() {
         locationRequest.interval = 5000
         locationRequest.fastestInterval = 2000
         getCurrentLocation()
-
     }
 
     override fun onRequestPermissionsResult(
@@ -89,6 +89,9 @@ class MainActivity : AppCompatActivity() {
                     turnOnGPS()
                 }
             }
+            else{
+                getCurrentLocation()
+            }
         }
     }
 
@@ -98,7 +101,11 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Подождите, идёт включение GPS", Toast.LENGTH_SHORT).show()
                 getCurrentLocation()
+            }else if(resultCode == RESULT_CANCELED){
+                Toast.makeText(this, "GPS required to be turned on", Toast.LENGTH_SHORT).show()
+                turnOnGPS()
             }
         }
     }
@@ -116,18 +123,11 @@ class MainActivity : AppCompatActivity() {
                             super.onLocationResult(locationResult)
                             LocationServices.getFusedLocationProviderClient(this@MainActivity)
                                 .removeLocationUpdates(this)
-//                                if (locationResult != null && locationResult.locations.size > 0) {
-//                                    val index = locationResult.locations.size - 1
-//                                    val latitude = locationResult.locations[index].latitude
-//                                    val longitude = locationResult.locations[index].longitude
-//                                    AddressText.setText("Latitude: $latitude\nLongitude: $longitude")
-//                                }
                         }
                     }, Looper.getMainLooper())
             } else {
                 turnOnGPS()
             }
-
         } else {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
@@ -173,7 +173,9 @@ class MainActivity : AppCompatActivity() {
                 val editor = preferences.edit()
                 editor.putInt(VALIDATION_PREFERENCES_COUNT, validationGeolocation)
                 editor.apply()
-                recreate()
+                Handler().postDelayed({
+                    recreate()
+                }, 5000)
             }
         }
         return isEnabled
