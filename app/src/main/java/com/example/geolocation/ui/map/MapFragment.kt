@@ -126,7 +126,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                     val currentLocation  = LatLng(userLatitude, userLongitude)
 
                     if(getDistance(country, currentLocation)<=500){
-                        showNotification()
+                        showNotification(title)
                         preferences = this.requireActivity().getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
                         val editor = preferences.edit()
                         editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
@@ -190,7 +190,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         }
     }
 
-    private fun showNotification(){
+    private fun showNotification(title:String){
         createNotificationChannel()
 
         val intent = Intent(context, NotificationActivity::class.java)
@@ -204,7 +204,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             NotificationCompat.Builder(it, channelId)
                 .setSmallIcon(R.drawable.ic_baseline_navigation_24)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentTitle("Вы приближаетесь к точке")
+                .setContentTitle("Вы приближаетесь к точке $title")
                 .setContentText("Нажмите на уведомление, чтобы перейти на страницу с меткой и вашей текущей позицией")
                 .setContentIntent(pendingIntent)
                 .build()
