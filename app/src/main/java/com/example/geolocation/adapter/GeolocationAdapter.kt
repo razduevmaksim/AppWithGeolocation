@@ -3,12 +3,15 @@ package com.example.geolocation.adapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
-import com.example.geolocation.R
+import com.example.geolocation.*
 import com.example.geolocation.db.GeolocationDatabase
 import com.example.geolocation.model.GeolocationModel
 import kotlinx.android.synthetic.main.item_layout.view.*
@@ -16,6 +19,7 @@ import kotlinx.android.synthetic.main.item_layout.view.*
 class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationViewHolder>() {
 
     private var listGeolocation = emptyList<GeolocationModel>()
+    private lateinit var preferences: SharedPreferences
 
     class GeolocationViewHolder(view: View): RecyclerView.ViewHolder(view)
 
@@ -29,6 +33,19 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
         holder.itemView.item_title.text = listGeolocation[position].title
         holder.itemView.item_latitude_value.text = listGeolocation[position].latitude
         holder.itemView.item_longitude_value.text = listGeolocation[position].longitude
+        holder.itemView.setOnClickListener {
+            val title = listGeolocation[position].title
+            val latitude = listGeolocation[position].latitude
+            val longitude = listGeolocation[position].longitude
+            preferences = it.context.getSharedPreferences(GEOLOCATION_PREFERENCES_ITEM, Context.MODE_PRIVATE)
+            val editor = preferences.edit()
+            editor.putString(GEOLOCATION_PREFERENCES_TITLE_ITEM, title)
+            editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE_ITEM, latitude.toFloat())
+            editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE_ITEM, longitude.toFloat())
+            editor.apply()
+            val intent = Intent(it.context, ItemActivity::class.java)
+            it.context.startActivity(intent)
+        }
         holder.itemView.button_delete.setOnClickListener{
                 val builder = AlertDialog.Builder(it.context)
                 builder.setTitle("Удаление данных")
