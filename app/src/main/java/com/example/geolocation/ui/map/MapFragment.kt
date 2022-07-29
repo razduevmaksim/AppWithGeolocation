@@ -142,14 +142,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
         binding.buttonAdd.setOnClickListener {
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("Enter Data")
-            builder.setMessage("Enter your title")
+            builder.setTitle("Добавление точки")
+            builder.setMessage("Введите название точки")
             val editTextDialog = EditText(context)
             builder.setView(editTextDialog)
-            builder.setNegativeButton("Cancel"){ dialog, _ ->
+            builder.setNegativeButton("Отмена"){ dialog, _ ->
                 dialog.cancel()
             }
-            builder.setPositiveButton("Apply"){ _, _ ->
+            builder.setPositiveButton("Подтвердить"){ _, _ ->
                 title = if (editTextDialog.text.toString() == ""){
                     "New Point"
                 } else {

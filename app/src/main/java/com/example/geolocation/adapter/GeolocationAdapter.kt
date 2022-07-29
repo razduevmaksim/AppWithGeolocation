@@ -6,6 +6,7 @@ import android.app.Application
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocation.R
 import com.example.geolocation.db.GeolocationDatabase
@@ -32,10 +33,10 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
                 val builder = AlertDialog.Builder(it.context)
                 builder.setTitle("Удаление данных")
                 builder.setMessage("Вы действительно хотите удалить данные?")
-                builder.setNegativeButton("Cancel"){ dialog, _ ->
+                builder.setNegativeButton("Отмена"){ dialog, _ ->
                     dialog.cancel()
                 }
-                builder.setPositiveButton("Delete"){ _, _ ->
+                builder.setPositiveButton("Удалить"){ _, _ ->
                     val id = listGeolocation[position].id
                     GeolocationDatabase.getInstance(Application()).getGeolocationDao().deleteById(id)
                 }
@@ -45,16 +46,25 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
 
         holder.itemView.button_update.setOnClickListener {
             val id = listGeolocation[position].id
-            val title = holder.itemView.item_title_edit_text.text
 
-            holder.itemView.item_title_edit_text.setText("")
-            if (title.toString() == "") {
-                GeolocationDatabase.getInstance(Application()).getGeolocationDao()
-                    .updateById(id, "New Point")
-            } else {
-                GeolocationDatabase.getInstance(Application()).getGeolocationDao()
-                    .updateById(id, title.toString())
+            val builder = AlertDialog.Builder(it.context)
+            builder.setTitle("Изменение название точки")
+            builder.setMessage("Введите ваше название")
+            val editTextDialog = EditText(it.context)
+            builder.setView(editTextDialog)
+            builder.setNegativeButton("Отмена"){ dialog, _ ->
+                dialog.cancel()
             }
+            builder.setPositiveButton("Подтвердить") { _, _ ->
+                val title = if (editTextDialog.text.toString() == "") {
+                    "New Point"
+                } else {
+                    editTextDialog.text.toString()
+                }
+                GeolocationDatabase.getInstance(Application()).getGeolocationDao()
+                    .updateById(id, title)
+            }
+            builder.show()
         }
     }
 

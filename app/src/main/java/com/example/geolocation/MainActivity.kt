@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Подождите, идёт включение GPS", Toast.LENGTH_SHORT).show()
                 getCurrentLocation()
             }else if(resultCode == RESULT_CANCELED){
-                Toast.makeText(this, "GPS required to be turned on", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Для работы приложения нужно включить GPS", Toast.LENGTH_SHORT).show()
                 turnOnGPS()
             }
         }
@@ -144,8 +144,6 @@ class MainActivity : AppCompatActivity() {
         result.addOnCompleteListener { task ->
             try {
                 task.getResult(ApiException::class.java)
-                Toast.makeText(this@MainActivity, "GPS is already turned on", Toast.LENGTH_SHORT)
-                    .show()
             } catch (e: ApiException) {
                 when (e.statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {

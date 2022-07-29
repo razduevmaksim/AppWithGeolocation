@@ -15,4 +15,6 @@
     <string name="longitude">Longitude:</string>
     <string name="delete">Delete</string>
     <string name="update">Update</string>
+    <string name="latitude_value">Latitude value</string>
+    <string name="longitude_value">Longitude value</string>
 </resources>
