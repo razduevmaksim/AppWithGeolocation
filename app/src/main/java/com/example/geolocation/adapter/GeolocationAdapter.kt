@@ -1,6 +1,7 @@
 package com.example.geolocation.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Application
 import android.view.LayoutInflater
 import android.view.View
@@ -28,8 +29,18 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
         holder.itemView.item_latitude_value.text = listGeolocation[position].latitude
         holder.itemView.item_longitude_value.text = listGeolocation[position].longitude
         holder.itemView.button_delete.setOnClickListener{
-            val id = listGeolocation[position].id
-            GeolocationDatabase.getInstance(Application()).getGeolocationDao().deleteById(id)
+                val builder = AlertDialog.Builder(it.context)
+                builder.setTitle("Удаление данных")
+                builder.setMessage("Вы действительно хотите удалить данные?")
+                builder.setNegativeButton("Cancel"){ dialog, _ ->
+                    dialog.cancel()
+                }
+                builder.setPositiveButton("Delete"){ _, _ ->
+                    val id = listGeolocation[position].id
+                    GeolocationDatabase.getInstance(Application()).getGeolocationDao().deleteById(id)
+                }
+                builder.show()
+
         }
 
         holder.itemView.button_update.setOnClickListener {

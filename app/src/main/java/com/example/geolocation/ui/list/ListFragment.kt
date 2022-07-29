@@ -2,6 +2,7 @@
 
 package com.example.geolocation.ui.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -46,7 +47,16 @@ class ListFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.mybutton) {
-            deleteAll()
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Удаление всех данных")
+            builder.setMessage("Вы действительно хотите удалить все данные?")
+            builder.setNegativeButton("Cancel"){ dialog, _ ->
+                dialog.cancel()
+            }
+            builder.setPositiveButton("Delete"){ _, _ ->
+                deleteAll()
+            }
+            builder.show()
         }
         return super.onOptionsItemSelected(item)
 
