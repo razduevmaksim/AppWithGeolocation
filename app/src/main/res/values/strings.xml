@@ -17,4 +17,5 @@
     <string name="update">Update</string>
     <string name="latitude_value">Latitude value</string>
     <string name="longitude_value">Longitude value</string>
+    <string name="clear_all">CLEAR ALL</string>
 </resources>
