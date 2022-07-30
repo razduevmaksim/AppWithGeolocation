@@ -35,46 +35,62 @@ class ListFragment : Fragment() {
         init()
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "inflater.inflate(R.menu.menu_action_bar, menu)",
-        "com.example.geolocation.R"
-    )
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "inflater.inflate(R.menu.menu_action_bar, menu)",
+            "com.example.geolocation.R"
+        )
     )
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_action_bar, menu)
     }
 
+    //вызов диалогового окна при клике на кнопку CLEAR ALL.
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.mybutton) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Удаление всех данных")
             builder.setMessage("Вы действительно хотите удалить все данные?")
-            builder.setNegativeButton("Cancel"){ dialog, _ ->
+
+            //события при клике на "отмена". Выход из диалогового окна
+            builder.setNegativeButton("Отмена") { dialog, _ ->
                 dialog.cancel()
             }
-            builder.setPositiveButton("Delete"){ _, _ ->
+
+            //события при клике на "удалить". Удаление данных из room
+            builder.setPositiveButton("Удалить") { _, _ ->
                 deleteAll()
             }
             builder.show()
         }
         return super.onOptionsItemSelected(item)
-
     }
-    private fun deleteAll(){
+
+    //запрос на удаление всех данных
+    private fun deleteAll() {
         val viewModel = ViewModelProvider(this)[ListViewModel::class.java]
+
+        //инициализация БД
         viewModel.initDatabase()
         adapter = GeolocationAdapter()
         recyclerView.adapter = adapter
+
         viewModel.deleteAll()
     }
 
+    // инициализация RecyclerView и чтение данных из room
     private fun init() {
         val viewModel = ViewModelProvider(this)[ListViewModel::class.java]
+
+        //инициализация БД
         viewModel.initDatabase()
+
         recyclerView = binding.recyclerViewLocation
         adapter = GeolocationAdapter()
         recyclerView.adapter = adapter
+
+        //чтение данных
         viewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
             adapter.setList(listGeolocation.asReversed())
         }

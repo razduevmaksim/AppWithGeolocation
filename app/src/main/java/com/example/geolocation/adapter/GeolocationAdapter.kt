@@ -21,23 +21,27 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
     private var listGeolocation = emptyList<GeolocationModel>()
     private lateinit var preferences: SharedPreferences
 
-    class GeolocationViewHolder(view: View): RecyclerView.ViewHolder(view)
+    class GeolocationViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GeolocationViewHolder {
         //указание на item_layout
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
-        return  GeolocationViewHolder(view)
+        return GeolocationViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: GeolocationViewHolder, position: Int) {
+        //установка значений в TextView
         holder.itemView.item_title.text = listGeolocation[position].title
         holder.itemView.item_latitude_value.text = listGeolocation[position].latitude
         holder.itemView.item_longitude_value.text = listGeolocation[position].longitude
+
+        //переход на ItemActivity при клике на item
         holder.itemView.setOnClickListener {
             val title = listGeolocation[position].title
             val latitude = listGeolocation[position].latitude
             val longitude = listGeolocation[position].longitude
-            preferences = it.context.getSharedPreferences(GEOLOCATION_PREFERENCES_ITEM, Context.MODE_PRIVATE)
+            preferences =
+                it.context.getSharedPreferences(GEOLOCATION_PREFERENCES_ITEM, Context.MODE_PRIVATE)
             val editor = preferences.edit()
             editor.putString(GEOLOCATION_PREFERENCES_TITLE_ITEM, title)
             editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE_ITEM, latitude.toFloat())
@@ -46,21 +50,28 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
             val intent = Intent(it.context, ItemActivity::class.java)
             it.context.startActivity(intent)
         }
-        holder.itemView.button_delete.setOnClickListener{
-                val builder = AlertDialog.Builder(it.context)
-                builder.setTitle("Удаление данных")
-                builder.setMessage("Вы действительно хотите удалить данные?")
-                builder.setNegativeButton("Отмена"){ dialog, _ ->
-                    dialog.cancel()
-                }
-                builder.setPositiveButton("Удалить"){ _, _ ->
-                    val id = listGeolocation[position].id
-                    GeolocationDatabase.getInstance(Application()).getGeolocationDao().deleteById(id)
-                }
-                builder.show()
+
+        //вызов диалогового окна при клике на кнопку Delete.
+        holder.itemView.button_delete.setOnClickListener {
+            val builder = AlertDialog.Builder(it.context)
+            builder.setTitle("Удаление данных")
+            builder.setMessage("Вы действительно хотите удалить данные?")
+
+            //события при клике на "отмена". Выход из диалогового окна
+            builder.setNegativeButton("Отмена") { dialog, _ ->
+                dialog.cancel()
+            }
+
+            //события при клике на "удалить". Удаление данных из room
+            builder.setPositiveButton("Удалить") { _, _ ->
+                val id = listGeolocation[position].id
+                GeolocationDatabase.getInstance(Application()).getGeolocationDao().deleteById(id)
+            }
+            builder.show()
 
         }
 
+        //вызов диалогового окна при клике на кнопку Update.
         holder.itemView.button_update.setOnClickListener {
             val id = listGeolocation[position].id
 
@@ -69,9 +80,13 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
             builder.setMessage("Введите ваше название")
             val editTextDialog = EditText(it.context)
             builder.setView(editTextDialog)
-            builder.setNegativeButton("Отмена"){ dialog, _ ->
+
+            //события при клике на "отмена". Выход из диалогового окна
+            builder.setNegativeButton("Отмена") { dialog, _ ->
                 dialog.cancel()
             }
+
+            //события при клике на "подтвердить". Изменение данных в room
             builder.setPositiveButton("Подтвердить") { _, _ ->
                 val title = if (editTextDialog.text.toString() == "") {
                     "New Point"
@@ -91,7 +106,7 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setList(list: List<GeolocationModel>){
+    fun setList(list: List<GeolocationModel>) {
         listGeolocation = list
         //обновление при изменении данных
         notifyDataSetChanged()

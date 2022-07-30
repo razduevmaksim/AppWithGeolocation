@@ -12,20 +12,24 @@ import kotlinx.coroutines.launch
 class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application
 
-    private lateinit var repository : GeolocationRepository
-    fun getAll():LiveData<List<GeolocationModel>>{
+    private lateinit var repository: GeolocationRepository
+
+    //получение всех данных из room
+    fun getAll(): LiveData<List<GeolocationModel>> {
         return repository.allGeolocations
     }
 
-    fun initDatabase(){
+    //инициализация БД
+    fun initDatabase() {
         val daoGeolocation = GeolocationDatabase.getInstance(context).getGeolocationDao()
         repository = GeolocationRealisation(daoGeolocation)
     }
-    fun insert(geolocationModel: GeolocationModel, onSuccess:() -> Unit) =
-        viewModelScope.launch (Dispatchers.IO) {
+
+    //добавление данных в room
+    fun insert(geolocationModel: GeolocationModel, onSuccess: () -> Unit) =
+        viewModelScope.launch(Dispatchers.IO) {
             repository.insert(geolocationModel) {
                 onSuccess()
             }
         }
-
 }

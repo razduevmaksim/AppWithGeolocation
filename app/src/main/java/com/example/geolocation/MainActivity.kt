@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var locationRequest: LocationRequest
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -77,9 +76,12 @@ class MainActivity : AppCompatActivity() {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 5000
         locationRequest.fastestInterval = 2000
+
+        //проверка на PERMISSIONS и включение GPS
         getCurrentLocation()
     }
 
+    //проверка на PERMISSIONS и включение GPS
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -89,13 +91,13 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (isGPSEnabled()) {
-                    Toast.makeText(this, "Подождите, идёт загрузка карты", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Подождите, идёт загрузка карты", Toast.LENGTH_SHORT)
+                        .show()
                     getCurrentLocation()
                 } else {
                     turnOnGPS()
                 }
-            }
-            else{
+            } else {
                 getCurrentLocation()
             }
         }
@@ -109,8 +111,9 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Подождите, идёт включение GPS", Toast.LENGTH_SHORT).show()
                 getCurrentLocation()
-            }else if(resultCode == RESULT_CANCELED){
-                Toast.makeText(this, "Для работы приложения нужно включить GPS", Toast.LENGTH_SHORT).show()
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Для работы приложения нужно включить GPS", Toast.LENGTH_SHORT)
+                    .show()
                 turnOnGPS()
             }
         }
@@ -170,7 +173,7 @@ class MainActivity : AppCompatActivity() {
             locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         }
         val isEnabled: Boolean = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (isEnabled){
+        if (isEnabled) {
             validationGeolocation = preferences.getInt(VALIDATION_PREFERENCES_COUNT, 0)
             if (validationGeolocation == 0) {
                 validationGeolocation++

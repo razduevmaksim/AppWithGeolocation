@@ -9,23 +9,25 @@ import com.example.geolocation.model.GeolocationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ListViewModel(application: Application) : AndroidViewModel(application){
+class ListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private lateinit var repository : GeolocationRepository
+    private lateinit var repository: GeolocationRepository
     private val context = application
 
-    fun initDatabase(){
+    //инициализация БД
+    fun initDatabase() {
         val daoGeolocation = GeolocationDatabase.getInstance(context).getGeolocationDao()
         repository = GeolocationRealisation(daoGeolocation)
     }
 
-    fun getAll():LiveData<List<GeolocationModel>>{
+    //получение всех данных из room
+    fun getAll(): LiveData<List<GeolocationModel>> {
         return repository.allGeolocations
     }
 
+    //удаление всех данных
     fun deleteAll() =
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteAll()
         }
-
 }

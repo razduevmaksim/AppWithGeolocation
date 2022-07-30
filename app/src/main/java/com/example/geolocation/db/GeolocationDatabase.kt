@@ -11,17 +11,21 @@ import com.example.geolocation.model.GeolocationModel
 abstract class GeolocationDatabase : RoomDatabase() {
     abstract fun getGeolocationDao(): GeolocationDao
 
-    companion object{
-        private var database: GeolocationDatabase ?= null
+    companion object {
+        private var database: GeolocationDatabase? = null
 
         @Synchronized
-        fun getInstance(context: Application):GeolocationDatabase{
-            return if (database == null){
-                database = Room.databaseBuilder(context.applicationContext, GeolocationDatabase::class.java, "db")
+        fun getInstance(context: Application): GeolocationDatabase {
+            return if (database == null) {
+                database = Room.databaseBuilder(
+                    context.applicationContext,
+                    GeolocationDatabase::class.java,
+                    "db"
+                )
                     .allowMainThreadQueries()
                     .build()
                 database as GeolocationDatabase
-            }else{
+            } else {
                 database as GeolocationDatabase
             }
 

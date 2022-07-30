@@ -40,10 +40,15 @@ class SettingsFragment : Fragment(), MyLocationListenerInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        preferences = this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-        sample_rate_seek_bar_value.text = preferences.getLong(APP_PREFERENCES_MINUTES, 1L).toInt().toString()
+        preferences =
+            this.requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+        sample_rate_seek_bar_value.text =
+            preferences.getLong(APP_PREFERENCES_MINUTES, 1L).toInt().toString()
         sample_rate_seek_bar.progress = preferences.getLong(APP_PREFERENCES_MINUTES, 1L).toInt()
-        binding.sampleRateSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+
+        //работа с SeekBar
+        binding.sampleRateSeekBar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.sampleRateSeekBarValue.text = progress.toString()
                 val editor = preferences.edit()
@@ -59,9 +64,14 @@ class SettingsFragment : Fragment(), MyLocationListenerInterface {
             }
 
         })
-        accuracy_seek_bar_value.text = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f).toInt().toString()
+
+        accuracy_seek_bar_value.text =
+            preferences.getFloat(APP_PREFERENCES_METRES, 10.0f).toInt().toString()
         accuracy_seek_bar.progress = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f).toInt()
-        binding.accuracySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+
+        //работа с SeekBar
+        binding.accuracySeekBar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.accuracySeekBarValue.text = progress.toString()
                 val editor = preferences.edit()
