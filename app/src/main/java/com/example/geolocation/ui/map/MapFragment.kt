@@ -40,6 +40,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
     private lateinit var preferences: SharedPreferences
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private var userLatitude:Double = 0.0
+    private var userLongitude:Double = 0.0
     private val channelId = "CHANNEL_ID"
     private val channelName = "CHANNEL_NAME"
     private val notificationId = 0
@@ -138,47 +140,48 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             )
 
             //получение текущего местоположения и данных(latitude and longitude)
-            val locationProvider = LocationManager.NETWORK_PROVIDER
+            val locationProvider = LocationManager.GPS_PROVIDER
             val lastKnownLocation =
                 locationManager.getLastKnownLocation(locationProvider)
-            if (lastKnownLocation != null) {
-                val userLatitude = lastKnownLocation.latitude
-                val userLongitude = lastKnownLocation.longitude
+            if (lastKnownLocation!=null) {
+                userLatitude = lastKnownLocation.latitude
+                userLongitude = lastKnownLocation.longitude
+            }
 
-                //инициализация БД
-                mapViewModel.initDatabase()
+            //инициализация БД
+            mapViewModel.initDatabase()
 
-                //получение всех данных из БД
-                mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
-                    listGeolocation.forEach { itemList ->
-                        val title = itemList.title
-                        val latitude = itemList.latitude.toDouble()
-                        val longitude = itemList.longitude.toDouble()
-                        val country = LatLng(latitude, longitude)
+            //получение всех данных из БД
+            mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
+                listGeolocation.forEach { itemList ->
+                    val title = itemList.title
+                    val latitude = itemList.latitude.toDouble()
+                    val longitude = itemList.longitude.toDouble()
+                    val country = LatLng(latitude, longitude)
 
-                        //добавление данных на карту
-                        mMap.addMarker(MarkerOptions().position(country).title(title))
+                    //добавление данных на карту
+                    mMap.addMarker(MarkerOptions().position(country).title(title))
 
-                        val currentLocation = LatLng(userLatitude, userLongitude)
+                    val currentLocation = LatLng(userLatitude, userLongitude)
 
-                        //подсчет расстояния между точкой и текущим местоположением
-                        if (getDistance(country, currentLocation) <= 500) {
-                            //уведомление о приближении к точке
-                            showNotification(title)
+                    //подсчет расстояния между точкой и текущим местоположением
+                    if (getDistance(country, currentLocation) <= 500) {
+                        //уведомление о приближении к точке
+                        showNotification(title)
 
-                            //запись в SharedPreferences
-                            preferences = this.requireActivity()
-                                .getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
-                            val editor = preferences.edit()
-                            editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
-                            editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
-                            editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
-                            editor.apply()
-                        }
+                        //запись в SharedPreferences
+                        preferences = this.requireActivity()
+                            .getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
+                        val editor = preferences.edit()
+                        editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
+                        editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
+                        editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
+                        editor.apply()
                     }
                 }
             }
         }
+
         val accuracy: Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
         val accuracyInInt = accuracy.toInt()
 
