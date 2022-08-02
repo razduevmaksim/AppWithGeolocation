@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -207,32 +208,43 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                     editTextDialog.text.toString()
                 }
 
-                var validationAccuracy = true
 
                 val mUpCameraPosition = mMap.cameraPosition
                 val country =
                     LatLng(mUpCameraPosition.target.latitude, mUpCameraPosition.target.longitude)
 
+                var validationInValidation = true
+
                 //инициализация БД
                 mapViewModel.initDatabase()
                 //получение всех данных из room
                 mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
-                    listGeolocation.forEach { itemList ->
-                        //проверка на добавление точки в соответствии с точностью трекинга геолокации
-                        val pointLatitude = itemList.latitude.toDouble()
-                        val pointLongitude = itemList.longitude.toDouble()
-                        val pointCountry = LatLng(pointLatitude, pointLongitude)
+                    if (validationInValidation) {
+                        var validationAccuracy = true
+                        listGeolocation.forEach { itemList ->
+                            //проверка на добавление точки в соответствии с точностью трекинга геолокации
+                            val pointLatitude = itemList.latitude.toDouble()
+                            val pointLongitude = itemList.longitude.toDouble()
+                            val pointCountry = LatLng(pointLatitude, pointLongitude)
 
-                        if (getDistance(country, pointCountry) <= accuracyInInt) {
-                            validationAccuracy = false
+                            if (getDistance(country, pointCountry) <= accuracyInInt) {
+                                validationAccuracy = false
+                                Toast.makeText(activity, "Вы пытаетесь создать точку вблизи существующей", Toast.LENGTH_SHORT).show()
+                                validationInValidation=false
+                                return@observe
+                            }
                         }
-                    }
-                    if (validationAccuracy) {
-                        mMap.addMarker(MarkerOptions().position(country).title(title))
+                        if (validationAccuracy) {
+                            mMap.addMarker(MarkerOptions().position(country).title(title))
 
-                        val latitude = country.latitude.toString()
-                        val longitude = country.longitude.toString()
-                        addInformationToDatabase(title, latitude, longitude)
+                            val latitude = country.latitude.toString()
+                            val longitude = country.longitude.toString()
+                            addInformationToDatabase(title, latitude, longitude)
+
+                            Toast.makeText(activity, "Точка создана", Toast.LENGTH_SHORT).show()
+                            validationInValidation=false
+                            return@observe
+                        }
                     }
                 }
             }

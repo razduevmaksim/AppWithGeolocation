@@ -5,6 +5,7 @@
     <dimen name="text_large">25sp</dimen>
     <dimen name="text_normal">20sp</dimen>
     <dimen name="text_small">15sp</dimen>
+    <dimen name="text_ештн">5sp</dimen>
 
     <!-- typical spacing between two views -->
     <dimen name="spacing_huge">0dp</dimen>

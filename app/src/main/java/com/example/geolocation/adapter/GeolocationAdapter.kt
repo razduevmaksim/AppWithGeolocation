@@ -79,6 +79,7 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
             builder.setTitle("Изменение название точки")
             builder.setMessage("Введите ваше название")
             val editTextDialog = EditText(it.context)
+            editTextDialog.setText(listGeolocation[position].title)
             builder.setView(editTextDialog)
 
             //события при клике на "отмена". Выход из диалогового окна
