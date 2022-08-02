@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_normal"
-        android:text="@string/sample_rate_description"
+        android:text="@string/accuracy_description"
         app:layout_constraintTop_toBottomOf="@id/sample_rate_title"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <SeekBar
@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_normal"
-        android:text="@string/accuracy_description"
+        android:text="@string/sample_rate_description"
         app:layout_constraintTop_toBottomOf="@id/accuracy_title"
         app:layout_constraintLeft_toLeftOf="parent"/>
     <SeekBar
