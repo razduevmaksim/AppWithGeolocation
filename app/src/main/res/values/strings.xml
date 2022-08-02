@@ -18,4 +18,6 @@
     <string name="latitude_value">Latitude value</string>
     <string name="longitude_value">Longitude value</string>
     <string name="clear_all">CLEAR ALL</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_item">Item</string>
 </resources>

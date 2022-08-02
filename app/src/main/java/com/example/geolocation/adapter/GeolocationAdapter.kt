@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocation.*
 import com.example.geolocation.db.GeolocationDatabase
@@ -47,8 +47,7 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
             editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE_ITEM, latitude.toFloat())
             editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE_ITEM, longitude.toFloat())
             editor.apply()
-            val intent = Intent(it.context, ItemActivity::class.java)
-            it.context.startActivity(intent)
+            Navigation.findNavController(it).navigate(R.id.action_navigation_list_to_itemFragment)
         }
 
         //вызов диалогового окна при клике на кнопку Delete.
