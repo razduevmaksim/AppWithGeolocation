@@ -2,12 +2,13 @@
 
 package com.example.geolocation.ui.map
 
-import android.app.*
+import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationChannelGroup
+import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -17,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +34,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
+
 class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface {
     private lateinit var mMap: GoogleMap
     private lateinit var locationManager: LocationManager
@@ -43,9 +44,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
 
     private var userLatitude:Double = 0.0
     private var userLongitude:Double = 0.0
-    private val channelId = "CHANNEL_ID"
-    private val channelName = "CHANNEL_NAME"
-    private val notificationId = 0
+    val channelId1 = 0x00001
+    val channelId2 = 0x00002
+    private val groupId1 = "CustomServiceGroup1"
+    val channelIdName1 = "CustomServiceChannel1"
+    val channelIdName2 = "CustomServiceChannel2"
+    private val channelIdName3 = "CustomServiceChannel3"
     private lateinit var title: String
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -73,6 +77,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment? as SupportMapFragment
         mapFragment.getMapAsync(this)
+        createNotificationChannel()
     }
 
     //инициализация LocationManager и MyLocationListener
@@ -98,7 +103,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             )
         ) {}
     }
-
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -141,7 +145,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
             )
 
             //получение текущего местоположения и данных(latitude and longitude)
-            val locationProvider = LocationManager.GPS_PROVIDER
+            val locationProvider = LocationManager.NETWORK_PROVIDER
             val lastKnownLocation =
                 locationManager.getLastKnownLocation(locationProvider)
             if (lastKnownLocation!=null) {
@@ -164,21 +168,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                     mMap.addMarker(MarkerOptions().position(country).title(title))
 
                     val currentLocation = LatLng(userLatitude, userLongitude)
-
                     //подсчет расстояния между точкой и текущим местоположением
-                    if (getDistance(country, currentLocation) <= 500) {
-                        //уведомление о приближении к точке
-                        showNotification(title)
+                    //запись в SharedPreferences
+                    preferences = this.requireActivity()
+                        .getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
+                    val editor = preferences.edit()
+                    editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
+                    editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
+                    editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
+                    editor.apply()
 
-                        //запись в SharedPreferences
-                        preferences = this.requireActivity()
-                            .getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
-                        val editor = preferences.edit()
-                        editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
-                        editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
-                        editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
-                        editor.apply()
-                    }
+                    val distance = getDistance(country, currentLocation).toInt()
+
+                    CustomService().getInstance()?.createNotification2(context, title, distance)
                 }
             }
         }
@@ -252,46 +254,39 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         }
     }
 
-    //отображение уведомления
-    private fun showNotification(title: String) {
-        createNotificationChannel()
-
-        val intent = Intent(context, NotificationActivity::class.java)
-
-        val pendingIntent = TaskStackBuilder.create(context).run {
-            addNextIntentWithParentStack(intent)
-            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        val notificationCompat = context?.let {
-            NotificationCompat.Builder(it, channelId)
-                .setSmallIcon(R.drawable.ic_baseline_navigation_24)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentTitle("Вы приближаетесь к точке $title")
-                .setContentText("Нажмите на уведомление, чтобы перейти на страницу с меткой и вашей текущей позицией")
-                .setContentIntent(pendingIntent)
-                .build()
-        }
-        val notificationManager = context?.let { NotificationManagerCompat.from(it) }
-
-        if (notificationCompat != null) {
-            notificationManager?.notify(notificationId, notificationCompat)
-        }
-    }
-
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
+        val group1 = NotificationChannelGroup(
+            groupId1,
+            "Group 1"
+        )
+        val channel1 = NotificationChannel(
+            channelIdName1,
+            "Channel 1",
             NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            lightColor = Color.BLUE
-            enableLights(true)
-        }
-
-        val notificationManager =
-            context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        )
+        channel1.description = "This is Channel 1"
+        channel1.group = groupId1
+        val channel2 = NotificationChannel(
+            channelIdName2,
+            "Channel 2",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        //channel2.setSound(null,null); //For No Sounds
+        //channel2.enableVibration(false); //For No Vibration
+        channel2.description = "This is Channel 2"
+        channel2.group = groupId1
+        val channel3 = NotificationChannel(
+            channelIdName3,
+            "Channel 3",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        channel3.description = "This is Channel 3"
+        channel3.group = groupId1
+        val manager = context?.let { NotificationManagerCompat.from(it) }
+        manager?.createNotificationChannelGroup(group1)
+        manager?.createNotificationChannel(channel1)
+        manager?.createNotificationChannel(channel2)
+        manager?.createNotificationChannel(channel3)
     }
 
     //получение расстояния между точками
@@ -311,4 +306,5 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
         super.onDestroyView()
         _binding = null
     }
+
 }

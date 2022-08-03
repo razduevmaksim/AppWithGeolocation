@@ -15,6 +15,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -79,6 +80,8 @@ class MainActivity : AppCompatActivity() {
 
         //проверка на PERMISSIONS и включение GPS
         getCurrentLocation()
+        //включение сервиса
+        startService()
     }
 
     //проверка на PERMISSIONS и включение GPS
@@ -186,5 +189,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return isEnabled
+    }
+
+    private fun startService() {
+        CustomService().newIntent(this).let {
+            ContextCompat.startForegroundService(
+                this,
+                it
+            )
+        }
+    }
+//    fun stopService() {
+//        stopService(
+//            CustomService().newIntent(this)
+//        )
+//        //CustomService.getInstance().stopSelf();
+//    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val bundle = intent.extras
+        bundle!!.getString("DATA")
     }
 }
