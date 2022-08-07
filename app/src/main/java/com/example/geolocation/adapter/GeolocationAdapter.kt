@@ -17,7 +17,6 @@ import com.example.geolocation.model.GeolocationModel
 import kotlinx.android.synthetic.main.item_layout.view.*
 
 class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationViewHolder>() {
-
     private var listGeolocation = emptyList<GeolocationModel>()
     private lateinit var preferences: SharedPreferences
 
@@ -46,8 +45,9 @@ class GeolocationAdapter : RecyclerView.Adapter<GeolocationAdapter.GeolocationVi
             editor.putString(GEOLOCATION_PREFERENCES_TITLE_ITEM, title)
             editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE_ITEM, latitude.toFloat())
             editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE_ITEM, longitude.toFloat())
+            editor.putBoolean(GEOLOCATION_PREFERENCES_VALIDATION_ITEM, true)
             editor.apply()
-            Navigation.findNavController(it).navigate(R.id.action_navigation_list_to_itemFragment)
+            Navigation.findNavController(it).navigate(R.id.action_navigation_list_to_navigation_map)
         }
 
         //вызов диалогового окна при клике на кнопку Delete.

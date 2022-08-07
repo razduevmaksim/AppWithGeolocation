@@ -17,8 +17,8 @@
         android:label="@string/title_list"
         tools:layout="@layout/fragment_list" >
         <action
-            android:id="@+id/action_navigation_list_to_itemFragment"
-            app:destination="@id/item_fragment" />
+            android:id="@+id/action_navigation_list_to_navigation_map"
+            app:destination="@id/navigation_map" />
     </fragment>
 
     <fragment
@@ -26,9 +26,4 @@
         android:name="com.example.geolocation.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
-    <fragment
-        android:id="@+id/item_fragment"
-        android:name="com.example.geolocation.ui.item.ItemFragment"
-        android:label="@string/title_item"
-        tools:layout="@layout/fragment_item" />
 </navigation>

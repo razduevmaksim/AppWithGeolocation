@@ -28,6 +28,7 @@ import com.example.geolocation.ui.myLocationListener.MyLocationListener
 import com.example.geolocation.ui.myLocationListener.MyLocationListenerInterface
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -126,65 +127,89 @@ class MapFragment : Fragment(), OnMapReadyCallback, MyLocationListenerInterface 
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             } == PackageManager.PERMISSION_GRANTED) {
+            preferences = this.requireActivity()
+                .getSharedPreferences(GEOLOCATION_PREFERENCES_ITEM, Context.MODE_PRIVATE)
 
-            //очищение карты
-            mMap.clear()
+            val validationPoint = preferences.getBoolean(GEOLOCATION_PREFERENCES_VALIDATION_ITEM, false)
 
-            //отображение текущего местоположения
-            mMap.isMyLocationEnabled = true
+            if (validationPoint) {
+                //очищение карты
+                mMap.clear()
 
-            //время обновления и точность данных
-            val sampleRate: Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
-            val accuracy: Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
+                mMap.isMyLocationEnabled = true
 
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                sampleRate,
-                accuracy,
-                myLocationListener
-            )
+                val title = preferences.getString(GEOLOCATION_PREFERENCES_TITLE_ITEM, "New Point")
+                val latitude = preferences.getFloat(GEOLOCATION_PREFERENCES_LATITUDE_ITEM, 0.0f)
+                val longitude = preferences.getFloat(GEOLOCATION_PREFERENCES_LONGITUDE_ITEM, 0.0f)
 
-            //получение текущего местоположения и данных(latitude and longitude)
-            val locationProvider = LocationManager.NETWORK_PROVIDER
-            val lastKnownLocation =
-                locationManager.getLastKnownLocation(locationProvider)
-            if (lastKnownLocation!=null) {
-                userLatitude = lastKnownLocation.latitude
-                userLongitude = lastKnownLocation.longitude
-            }
+                val country = LatLng(latitude.toDouble(), longitude.toDouble())
+                mMap.addMarker(MarkerOptions().position(country).title(title))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(country))
 
-            //инициализация БД
-            mapViewModel.initDatabase()
+                val editor = preferences.edit()
+                editor.putBoolean(GEOLOCATION_PREFERENCES_VALIDATION_ITEM, false)
+                editor.apply()
 
-            //получение всех данных из БД
-            mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
-                listGeolocation.forEach { itemList ->
-                    val title = itemList.title
-                    val latitude = itemList.latitude.toDouble()
-                    val longitude = itemList.longitude.toDouble()
-                    val country = LatLng(latitude, longitude)
 
-                    //добавление данных на карту
-                    mMap.addMarker(MarkerOptions().position(country).title(title))
+            } else if (!validationPoint) {
+                //очищение карты
+                mMap.clear()
 
-                    val currentLocation = LatLng(userLatitude, userLongitude)
-                    //подсчет расстояния между точкой и текущим местоположением
-                    //запись в SharedPreferences
-                    preferences = this.requireActivity()
-                        .getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
-                    val editor = preferences.edit()
-                    editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
-                    editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
-                    editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
-                    editor.apply()
+                //отображение текущего местоположения
+                mMap.isMyLocationEnabled = true
 
-                    val distance = getDistance(country, currentLocation).toInt()
+                //время обновления и точность данных
+                val sampleRate: Long = preferences.getLong(APP_PREFERENCES_MINUTES, 1L)
+                val accuracy: Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
 
-                    CustomService().getInstance()?.createNotification2(context, title, distance)
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    sampleRate,
+                    accuracy,
+                    myLocationListener
+                )
+
+                //получение текущего местоположения и данных(latitude and longitude)
+                val locationProvider = LocationManager.NETWORK_PROVIDER
+                val lastKnownLocation =
+                    locationManager.getLastKnownLocation(locationProvider)
+                if (lastKnownLocation != null) {
+                    userLatitude = lastKnownLocation.latitude
+                    userLongitude = lastKnownLocation.longitude
+                }
+
+                //инициализация БД
+                mapViewModel.initDatabase()
+
+                //получение всех данных из БД
+                mapViewModel.getAll().observe(viewLifecycleOwner) { listGeolocation ->
+                    listGeolocation.forEach { itemList ->
+                        val title = itemList.title
+                        val latitude = itemList.latitude.toDouble()
+                        val longitude = itemList.longitude.toDouble()
+                        val country = LatLng(latitude, longitude)
+
+                        //добавление данных на карту
+                        mMap.addMarker(MarkerOptions().position(country).title(title))
+
+                        val currentLocation = LatLng(userLatitude, userLongitude)
+                        //подсчет расстояния между точкой и текущим местоположением
+                        //запись в SharedPreferences
+                        preferences = this.requireActivity()
+                            .getSharedPreferences(GEOLOCATION_PREFERENCES, Context.MODE_PRIVATE)
+                        val editor = preferences.edit()
+                        editor.putString(GEOLOCATION_PREFERENCES_TITLE, title)
+                        editor.putFloat(GEOLOCATION_PREFERENCES_LATITUDE, latitude.toFloat())
+                        editor.putFloat(GEOLOCATION_PREFERENCES_LONGITUDE, longitude.toFloat())
+                        editor.apply()
+
+                        val distance = getDistance(country, currentLocation).toInt()
+
+                        CustomService().getInstance()?.createNotification2(context, title, distance)
+                    }
                 }
             }
         }
-
         val accuracy: Float = preferences.getFloat(APP_PREFERENCES_METRES, 10.0f)
         val accuracyInInt = accuracy.toInt()
 
